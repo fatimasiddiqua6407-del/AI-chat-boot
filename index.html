@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Flask AI Chatbot</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-900 text-white min-h-screen flex flex-col items-center p-5">
+    
+    <div class="w-full max-w-xl bg-slate-800 rounded-lg shadow-2xl p-6">
+        <h1 class="text-2xl font-bold mb-4 border-b border-slate-700 pb-2">Flask AI Assistant</h1>
+        
+        <div id="chat-window" class="h-96 overflow-y-auto mb-4 space-y-3 p-2">
+            </div>
+
+        <div class="flex gap-2">
+            <input type="text" id="userInput" class="flex-1 p-2 rounded bg-slate-700 border-none focus:ring-2 focus:ring-blue-500" placeholder="Type here...">
+            <button onclick="askAI()" class="bg-blue-600 px-4 py-2 rounded hover:bg-blue-500">Send</button>
+        </div>
+    </div>
+
+    <script>
+        async function askAI() {
+            const input = document.getElementById('userInput');
+            const chatWindow = document.getElementById('chat-window');
+            const message = input.value;
+            if(!message) return;
+
+            chatWindow.innerHTML += `<div class="text-blue-400"><b>Aap:</b> ${message}</div>`;
+            input.value = '';
+
+            const response = await fetch('/chat', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({message: message})
+            });
+            const data = await response.json();
+            
+            chatWindow.innerHTML += `<div class="text-green-400"><b>AI:</b> ${data.response || data.error}</div>`;
+            chatWindow.scrollTop = chatWindow.scrollHeight;
+        }
+    </script>
+</body>
+</html>
